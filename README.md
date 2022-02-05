@@ -1,7 +1,7 @@
 ##  match_opt ![Build Status](https://github.com/huitseeker/match-opt/workflows/Rust/badge.svg)
 
 **match_opt** is a macro that converts a partial pattern-match into one that returns an `Option`.
-This can be used as a shorthand to simplify a complex type, for which only one or few cases are useful.
+This can be used as a shorthand to simplify a complex pattern-match, for which only one or few cases are useful.
 
 For example:
 

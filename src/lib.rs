@@ -16,12 +16,6 @@
 /// ```
 #[macro_export]
 macro_rules! match_opt {
-    ($expression:expr, $( $pattern:pat_param )|+ $( if $guard: expr )? $(,)? => $output:expr ) => {
-        match $expression {
-            $( $pattern )|+ $( if $guard )? => Some($output),
-            _ => None,
-        }
-    };
     ($expression:expr, $( $( $pattern:pat_param )|+ $( if $guard: expr )? $(,)? => $output:expr ),* ) => {
         match $expression {
             $(  $( $pattern )|+ $( if $guard )? => Some($output), )*
