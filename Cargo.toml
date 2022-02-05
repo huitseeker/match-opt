@@ -2,7 +2,7 @@
 name = "match_opt"
 version = "0.1.0"
 edition = "2021"
-repository = "https://github.com/huitseeker/match_opt"
+repository = "https://github.com/huitseeker/match-opt"
 keywords = ["match", "macro"]
 description = "A macro for turning a partial match into a full match returning an option."
 authors = ["François Garillot <francois@garillot.net>"]
