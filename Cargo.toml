@@ -1,6 +1,6 @@
 [package]
 name = "match_opt"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 repository = "https://github.com/huitseeker/match-opt"
 keywords = ["match", "macro"]
