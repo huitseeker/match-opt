@@ -17,50 +17,50 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq
+          sudo apt-get install -y jq coreutils
         
-      - name: Check if version is already published
-        id: check_version
+      - name: Check if version already exists
+        id: check
         run: |
           set +e
           ./scripts/is_version_already_uploaded.sh match_opt
-          EXIT_CODE=$?
+          EXIT_CODE="$?"
           set -e
-          
-          if [ $EXIT_CODE -eq 7 ]; then
-            echo "Version already published"
-            echo "already_published=true" >> $GITHUB_OUTPUT
-          elif [ $EXIT_CODE -eq 0 ]; then
-            echo "Version is new"
-            echo "already_published=false" >> $GITHUB_OUTPUT
+          if [[ "$EXIT_CODE" == "7" ]]; then
+            echo "is_new_version=no" >> $GITHUB_OUTPUT
+          elif [[ "$EXIT_CODE" == "0" ]]; then
+            echo "is_new_version=yes" >> $GITHUB_OUTPUT
+          elif [[ "$EXIT_CODE" == "4" ]]; then
+            # Crate doesn't exist or API error - treat as new version
+            echo "is_new_version=yes" >> $GITHUB_OUTPUT
           else
-            echo "Unexpected error from version check script"
-            exit $EXIT_CODE
+            # Unexpected outcome, indicates a bug.
+            exit "$EXIT_CODE"
           fi
           
       - name: Run tests
-        if: steps.check_version.outputs.already_published == 'false'
+        if: steps.check.outputs.is_new_version == 'yes'
         run: cargo test
         
       - name: Check formatting
-        if: steps.check_version.outputs.already_published == 'false'
+        if: steps.check.outputs.is_new_version == 'yes'
         run: cargo fmt --check
         
       - name: Run clippy
-        if: steps.check_version.outputs.already_published == 'false'
+        if: steps.check.outputs.is_new_version == 'yes'
         run: cargo clippy -- -D warnings
         
       - name: Verify package
-        if: steps.check_version.outputs.already_published == 'false'
+        if: steps.check.outputs.is_new_version == 'yes'
         run: cargo package --dry-run
         
       - name: Get OIDC token for publishing
-        if: steps.check_version.outputs.already_published == 'false'
+        if: steps.check.outputs.is_new_version == 'yes'
         uses: rust-lang/crates-io-auth-action@v1
         id: auth
         
       - name: Publish to crates.io
-        if: steps.check_version.outputs.already_published == 'false'
+        if: steps.check.outputs.is_new_version == 'yes'
         run: cargo publish
         env:
           CARGO_REGISTRY_TOKEN: ${{ steps.auth.outputs.token }}
