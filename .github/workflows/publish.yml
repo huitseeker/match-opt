@@ -52,7 +52,7 @@ jobs:
         
       - name: Verify package
         if: steps.check.outputs.is_new_version == 'yes'
-        run: cargo package --dry-run
+        run: cargo package --list
         
       - name: Get OIDC token for publishing
         if: steps.check.outputs.is_new_version == 'yes'
